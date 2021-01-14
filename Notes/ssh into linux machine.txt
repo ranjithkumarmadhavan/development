@@ -1,0 +1,72 @@
+1. install putty and putty key gen.
+2. convert pem file to ppk using putty key gen.
+3. open putty and ec2-user@{public-ip} in host and goto ssh -> auth, click brower button and upload the ppk file.
+4. then click on session again and load the file.then click open.
+5. windows machine must have openssh-client and openssh-server feature installed.
+
+or
+
+1. windows machine must have openssh-client and openssh-server feature installed.
+2. download pem file from ec2.
+3. open powershell in pem downloaded location and execute following commands.
+
+$path = ".\ec2KeyPair.pem"
+# Reset to remove explicit permissions
+icacls.exe $path /reset
+# Give current user explicit read-permission
+icacls.exe $path /GRANT:R "$($env:USERNAME):(R)"
+# Disable inheritance and remove inherited permissions
+icacls.exe $path /inheritance:r
+
+after logging in commands
+1. sudo su
+2. yum update -y 
+3. yum install httpd -y
+4. systemctl start httpd
+5. systemctl enable httpd
+6. systemctl status httpd
+
+now Active must display
+
+Adding html page
+1. cd /var/www/html
+2. nano index.html (nano is default text editor in linux)
+3. chown ec2-user . (for allowing to copy files into linux)
+
+in local windows machine
+https://www.youtube.com/watch?v=qnn8iVcXJxw&ab_channel=AOSNotes
+
+scp -i ./ec2KeyPair.pem -r ./Login/* ec2-user@54.211.55.161:/var/www/html
+
+
+In AWS management console:
+Creat security group
+Creat keypair (.pem)
+Launch EC2 instance. Attach keypair and security group
+convert keypair .pem to .ppk
+SSH into your ec2 instance and run the following commands
+sudo su
+yum update -y
+yum install httpd -y
+cd /var/www/html
+chown ec2-user .
+
+On your computer:
+Copy the keypair (.pem format) to the folder where the files(that you want to transfer) are present.
+Open the command prompt
+Change directory to the location of your folder
+Run the following command for copying the file to copy only the contents of local_dir and not the directory local_dir itself:
+scp -i ./key-pair.pem ./path/to/files/ username@public-ip:/pathwhere/you/need/to/copy
+
+For example:
+scp -i ./Ec2KeyPair.pem -r ./Velocity/* ec2-user@107.21.140.196:/var/www/html
+
+
+To copy a single file from local directory:
+scp -i ./Ec2KeyPair.pem ./scp.txt ec2-user@107.21.140.196:/var/www/html
+
+Copy directory local_dir with all its sub-directories:
+scp -i ./Ec2KeyPair.pem -r ./Velocity ec2-user@107.21.140.196:/var/www/html
+
+Copy only the contents of local_dir and not the directory local_dir itself:
+scp -i ./Ec2KeyPair.pem -r ./Velocity/* ec2-user@107.21.140.196:/var/www/html
